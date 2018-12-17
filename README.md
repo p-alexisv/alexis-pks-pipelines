@@ -1,5 +1,5 @@
 # alexis-pks-pipelines
-This contains the pipelines I use to install and delete PKS foundations.
+This contains the pipelines I use to install and delete PKS foundations in vSphere.
 
 
 

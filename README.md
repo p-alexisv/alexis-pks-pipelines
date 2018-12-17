@@ -1,23 +1,24 @@
 # alexis-pks-pipelines
 This contains the pipelines I use to install, maintain and delete PKS
 
-Step 1: Get and note down the following
-get s3 bucket, access_key_id, secret_access_key and region.
-get system_domain
-get pks_api uri
-get pivnet token
-get opsman_version
+Step 1: Get and note down the following.  You will use these in creating your params.yml file for step4.
 
-Step 2: generate the following files
-state.yml
-env.yml
-opsman.yml
-auth.yml
-director.yml
-download-pks-config.yml
-gencert-pks.yml
-pks-config.yml
-updated-pks-config.yml
+- s3 bucket, access_key_id, secret_access_key and region.
+- system_domain
+- pks_api uri
+- pivnet token
+- opsman_version
+
+Step 2: generate the following files:
+
+- state.yml
+- env.yml
+- opsman.yml
+- auth.yml
+- director.yml
+- download-pks-config.yml
+- gencert-pks.yml
+- pks-config.yml
 
 
 Step 3: download the platform automation files (image and tasks)
@@ -41,5 +42,5 @@ $ fly -t cc24 up -p install-pks
 Step 7: Go to the Concourse UI and trigger the first job (create-opsman-vm)
 
 
-Step 8: Relax, sit back and watch it fly to completion.  ETA 50 mins.  
+Step 8: Relax, sit back and watch it fly to completion.  ETA 50 mins.  Once completed you will have a PKS foundation (with Ops Man, Director and PKS VMs).
 

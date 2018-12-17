@@ -8,7 +8,7 @@ This contains the pipelines I use to install and delete PKS foundations.
 - This is to automate installation of the whole foundation consisting of Ops Man, BOSH Director and PKS VM's.
 
 
-<h2>Step 1: Get and note down the following.  You will use these in creating your params.yml file for step4.</h2>
+<h2>Step 1: Get and note down the following.  You will use these in creating your params.yml file for step 5.</h2>
 
 - s3 bucket, access_key_id, secret_access_key and region
 	- get these from your S3 environment
@@ -46,8 +46,8 @@ In each of the above files, there are placeholders in the string format of '((va
 
 <h2>Step 4: Upload to your s3 bucket: </h2>
 
-- all yml files from step2
-- the platform automation files from step3
+- all yml files from step 2
+- the platform automation files from step 3
 
 
 <h2>Step 5: Prepare the pipeline.yml and params.yml files.</h2>

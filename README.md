@@ -12,10 +12,10 @@ This contains the pipelines I use to install and delete PKS foundations.
 
 - s3 bucket, access_key_id, secret_access_key and region
 	- get these from your S3 environment
-- system_domain
-- pks_api uri
+- `system_domain`
+- `pks_api` URI
 - pivnet legacy token
-- opsman version
+- Opsman version
 
 <h2>Step 2: Generate / prepare the following files:</h2>
 
@@ -58,8 +58,8 @@ In each of the above files, there are placeholders in the string format of '((va
 
 <h2>Step 6: Set the pipeline and unpause it</h2>
 
-- $ fly -t <concourse env> sp -p install-pks -c pipeline.yml -l params.yml
-- $ fly -t <concourse env> up -p install-pks
+- `$ fly -t <concourse env> sp -p install-pks -c pipeline.yml -l params.yml`
+- `$ fly -t <concourse env> up -p install-pks`
 
 
 <h2>Step 7: Go to the Concourse UI and trigger the first job (create-opsman-vm)</h2>

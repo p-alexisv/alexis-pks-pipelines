@@ -1,0 +1,30 @@
+---
+platform: linux
+
+inputs:
+  - name: staged-config
+  - name: gen-cert-script
+  - name: env
+
+params:
+  SYSTEM_DOMAIN:
+  PKS_API:
+  ENV_FILE: env.yml
+
+outputs:
+  - name: generated-config
+
+run:
+  path: bash
+  args:
+  - -c
+  - |
+    p-automator -v
+    set -eux
+    om --env env/"${ENV_FILE}" generate-certificate -d "${PKS_API},*.${SYSTEM_DOMAIN}" > generate-cert-key.json
+    sed -i 's/}//' ./generate-cert-key.json
+    export PKS_CERT=`cat ./generate-cert-key.json | awk -F, '{print $1}' | awk -F: '{print $2}' | sed -e 's/\\\\n/\\\\r\\\\n/g'`
+    export PKS_KEY=`cat ./generate-cert-key.json | awk -F, '{print $2}' | awk -F: '{print $2}' | sed -e 's/\\\\n/\\\\r\\\\n/g'`
+    cp staged-config/pks-config.yml generated-config/updated-pks-config.yml
+    perl -pi.bak -e 's/\(\(pks_tls.cert_pem\)\)/$ENV{'PKS_CERT'}/' generated-config/updated-pks-config.yml
+    perl -pi.bak -e 's/\(\(pks_tls.private_key_pem\)\)/$ENV{'PKS_KEY'}/' generated-config/updated-pks-config.yml

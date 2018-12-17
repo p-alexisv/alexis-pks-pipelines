@@ -1,0 +1,288 @@
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
+resources:
+- name: platform-automation-tasks-s3
+  type: s3
+  source:
+    access_key_id: ((access_key_id))
+    secret_access_key: ((secret_access_key))
+    region_name: ((region))
+    bucket: ((bucket))
+    regexp: platform-automation-tasks-(.*).zip
+
+- name: platform-automation-image-s3
+  type: s3
+  source:
+    access_key_id: ((access_key_id))
+    secret_access_key: ((secret_access_key))
+    region_name: ((region))
+    bucket: ((bucket))
+    regexp: platform-automation-image-(.*).tgz
+
+- name: env
+  type: s3
+  source:
+    access_key_id: ((access_key_id))
+    secret_access_key: ((secret_access_key))
+    region_name: ((region))
+    bucket: ((bucket))
+    versioned_file: env.yml
+
+- name: auth-config
+  type: s3
+  source:
+    access_key_id: ((access_key_id))
+    secret_access_key: ((secret_access_key))
+    region_name: ((region))
+    bucket: ((bucket))
+    versioned_file: auth.yml
+
+- name: opsman-config
+  type: s3
+  source:
+    access_key_id: ((access_key_id))
+    secret_access_key: ((secret_access_key))
+    region_name: ((region))
+    bucket: ((bucket))
+    versioned_file: opsman.yml
+
+- name: director-config
+  type: s3
+  source:
+    access_key_id: ((access_key_id))
+    secret_access_key: ((secret_access_key))
+    region_name: ((region))
+    bucket: ((bucket))
+    versioned_file: director.yml
+
+- name: opsman-image
+  type: pivnet
+  source:
+    api_token: ((pivnet_token))
+    product_slug: ops-manager
+    product_version: ((opsman_version))
+    sort_by: semver
+
+- name: state
+  type: s3
+  source:
+    access_key_id: ((access_key_id))
+    secret_access_key: ((secret_access_key))
+    region_name: ((region))
+    bucket: ((bucket))
+    versioned_file: state.yml
+
+- name: staged-config
+  type: s3
+  source:
+    access_key_id: ((access_key_id))
+    secret_access_key: ((secret_access_key))
+    region_name: ((region))
+    bucket: ((bucket))
+    versioned_file: pks-config.yml
+
+- name: gen-cert-script
+  type: s3
+  source:
+    access_key_id: ((access_key_id))
+    secret_access_key: ((secret_access_key))
+    region_name: ((region))
+    bucket: ((bucket))
+    versioned_file: gencert-pks.yml
+
+- name: generated-config
+  type: s3
+  source:
+    access_key_id: ((access_key_id))
+    secret_access_key: ((secret_access_key))
+    region_name: ((region))
+    bucket: ((bucket))
+    versioned_file: updated-pks-config.yml
+
+- name: download-pks-config
+  type: s3
+  source:
+    access_key_id: ((access_key_id))
+    secret_access_key: ((secret_access_key))
+    region_name: ((region))
+    bucket: ((bucket))
+    versioned_file: download-pks-config.yml
+
+jobs:
+- name: create-opsman-vm
+  plan:
+  - aggregate:
+    - get: platform-automation-tasks-s3
+      params:
+        unpack: true
+    - get: platform-automation-image-s3
+      params:
+        unpack: true
+    - get: opsman-image
+      params:
+        globs:
+        - '*.ova'
+    - get: opsman-config
+    - get: auth-config
+    - get: env
+    - get: state
+  - task: create-vm
+    image: platform-automation-image-s3
+    file: platform-automation-tasks-s3/tasks/create-vm.yml
+    input_mapping:
+      image: opsman-image
+      config: opsman-config
+    ensure:
+      put: state
+      params:
+        file: generated-state/state.yml
+  - task: configure-authentication
+    image: platform-automation-image-s3
+    file: platform-automation-tasks-s3/tasks/configure-authentication.yml
+    input_mapping:
+      config: auth-config
+    attempts: 10
+
+- name: configure-director
+  plan:
+  - aggregate:
+    - get: platform-automation-tasks-s3
+      params:
+        unpack: true
+    - get: platform-automation-image-s3
+      params:
+        unpack: true
+    - get: director-config
+    - get: env
+      passed:
+      - create-opsman-vm
+      trigger: true
+  - task: configure-director
+    image: platform-automation-image-s3
+    file: platform-automation-tasks-s3/tasks/configure-director.yml
+    input_mapping:
+      config: director-config
+
+- name: apply-director-changes
+  plan:
+  - aggregate:
+    - get: platform-automation-tasks-s3
+      params:
+        unpack: true
+    - get: platform-automation-image-s3
+      params:
+        unpack: true
+    - get: env
+      passed:
+      - configure-director
+      trigger: true
+  - task: apply-director-changes
+    image: platform-automation-image-s3
+    file: platform-automation-tasks-s3/tasks/apply-director-changes.yml
+
+- name: upload-and-stage-product
+  plan:
+  - aggregate:
+    - get: platform-automation-tasks-s3
+      params:
+        unpack: true
+    - get: platform-automation-image-s3
+      params:
+        unpack: true
+    - get: download-pks-config
+    - get: env
+      passed:
+      - apply-director-changes
+      trigger: true
+  - task: download-product
+    image: platform-automation-image-s3
+    file: platform-automation-tasks-s3/tasks/download-product.yml
+    input_mapping:
+      config: download-pks-config
+    params:
+      CONFIG_FILE: download-pks-config.yml
+  - task: upload-and-stage
+    image: platform-automation-image-s3
+    file: platform-automation-tasks-s3/tasks/upload-and-stage-product.yml
+    input_mapping:
+      product: downloaded-product
+  - task: upload-stemcell
+    image: platform-automation-image-s3
+    file: platform-automation-tasks-s3/tasks/upload-stemcell.yml
+    input_mapping:
+      stemcell: downloaded-stemcell
+  - task: assign-stemcell
+    image: platform-automation-image-s3
+    file: platform-automation-tasks-s3/tasks/assign-stemcell.yml
+    input_mapping:
+      config: assign-stemcell-config
+
+- name: update-pks-config-file
+  plan:
+  - aggregate:
+    - get: platform-automation-tasks-s3
+      params:
+        unpack: true
+    - get: platform-automation-image-s3
+      params:
+        unpack: true
+    - get: env
+      passed:
+      - upload-and-stage-product
+      trigger: true
+    - get: staged-config
+    - get: gen-cert-script
+  - task: gencert-pks
+    image: platform-automation-image-s3
+    file: gen-cert-script/gencert-pks.yml
+    params:
+      SYSTEM_DOMAIN: ((system_domain))
+      PKS_API: ((pks_api))
+    ensure:
+      put: generated-config
+      params:
+        file: generated-config/updated-pks-config.yml
+
+- name: config-pks
+  plan:
+  - aggregate:
+    - get: platform-automation-tasks-s3
+      params:
+        unpack: true
+    - get: platform-automation-image-s3
+      params:
+        unpack: true
+    - get: generated-config
+    - get: env
+      passed:
+      - update-pks-config-file
+      trigger: true
+  - task: configure-product
+    image: platform-automation-image-s3
+    file: platform-automation-tasks-s3/tasks/configure-product.yml
+    input_mapping:
+      config: generated-config
+    params:
+      CONFIG_FILE: updated-pks-config.yml
+
+- name: apply-changes
+  plan:
+  - aggregate:
+    - get: platform-automation-tasks-s3
+      params:
+        unpack: true
+    - get: platform-automation-image-s3
+      params:
+        unpack: true
+    - get: env
+      passed:
+      - config-pks
+      trigger: true
+  - task: apply-changes
+    image: platform-automation-image-s3
+    file: platform-automation-tasks-s3/tasks/apply-changes.yml

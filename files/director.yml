@@ -1,0 +1,87 @@
+az-configuration:
+- name: az1
+  clusters:
+  - cluster: Cluster
+    resource_pool: RP24
+  iaas_configuration_guid: ee6443d58371b48ac89b
+- name: az2
+  clusters:
+  - cluster: Cluster
+    resource_pool: RP24
+  iaas_configuration_guid: ee6443d58371b48ac89b
+- name: az3
+  clusters:
+  - cluster: Cluster
+    resource_pool: RP24
+  iaas_configuration_guid: ee6443d58371b48ac89b
+director-configuration:
+  allow_legacy_agents: true
+  blobstore_type: local
+  bosh_recreate_on_next_deploy: false
+  bosh_recreate_persistent_disks_on_next_deploy: false
+  database_type: internal
+  director_worker_count: 5
+  encryption:
+    keys: []
+    providers: []
+  excluded_recursors: []
+  hm_emailer_options:
+    enabled: false
+  hm_pager_duty_options:
+    enabled: false
+  identification_tags: {}
+  keep_unreachable_vms: false
+  local_blobstore_options:
+    tls_enabled: true
+  max_threads: 30
+  ntp_servers_string: ((ntp_servers))
+  post_deploy_enabled: true
+  resurrector_enabled: true
+  retry_bosh_deploys: false
+iaas-configuration:
+  bosh_disk_path: pcf_disk_env24
+  bosh_template_folder: pcf_templates_env24
+  bosh_vm_folder: pcf_vms_env24
+  datacenter: Datacenter
+  ephemeral_datastores_string: LUN01
+  nsx_networking_enabled: false
+  persistent_datastores_string: LUN01
+  ssl_verification_enabled: false
+  vcenter_host: ((vcenter_host_ip))
+  vcenter_username: ((vcenter_username))
+  vcenter_password: ((vcenter_password))
+network-assignment:
+  network:
+    name: INFRASTRUCTURE
+  other_availability_zones: []
+  singleton_availability_zone:
+    name: az1
+networks-configuration:
+  icmp_checks_enabled: false
+  networks:
+  - name: INFRASTRUCTURE
+    subnets:
+    - iaas_identifier: Lab-env24
+      cidr: ((cidr))
+      dns: ((dns))
+      gateway: ((gateway))
+      reserved_ip_ranges: ((reserved_ip_ranges))
+      availability_zone_names:
+      - az1
+resource-configuration:
+  compilation:
+    instances: automatic
+    instance_type:
+      id: automatic
+  director:
+    instances: automatic
+    persistent_disk:
+      size_mb: automatic
+    instance_type:
+      id: automatic
+security-configuration:
+  generate_vm_passwords: true
+syslog-configuration:
+  enabled: false
+vmextensions-configuration: []
+

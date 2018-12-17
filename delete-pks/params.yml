@@ -1,0 +1,4 @@
+access_key_id: "changeme"
+secret_access_key: "changeme"
+region: "us-east-1"
+bucket: "changeme"

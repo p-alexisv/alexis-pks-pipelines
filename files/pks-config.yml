@@ -1,0 +1,172 @@
+product-name: pivotal-container-service
+product-properties:
+  .pivotal-container-service.pks_tls:
+    value:
+      cert_pem: ((pks_tls.cert_pem))
+      private_key_pem: ((pks_tls.private_key_pem))
+  .properties.cloud_provider:
+    value: vSphere
+  .properties.cloud_provider.vsphere.vcenter_master_creds:
+    value:
+      identity: ((vcenter_admin_username)) # vcenter_admin_username
+      password: ((vcenter_admin_password)) # vcenter_admin_password
+  .properties.cloud_provider.vsphere.vcenter_ip:
+    value: ((vcenter_ip))
+  .properties.cloud_provider.vsphere.vcenter_dc:
+    value: "Datacenter"
+  .properties.cloud_provider.vsphere.vcenter_ds:
+    value: "LUN01"
+  .properties.cloud_provider.vsphere.vcenter_vms:
+    value:  "pcf_vms_env24"
+  .properties.network_selector:
+    value: flannel
+  .properties.pks-vrli:
+    value: disabled
+  .properties.pks_api_hostname:
+    value: ((pks_api_hostname))
+  .properties.plan1_selector:
+    value: Plan Active
+  .properties.plan1_selector.active.master_az_placement:
+    value: [az1]
+  .properties.plan1_selector.active.worker_az_placement:
+    value: [az1]  # Specify the availability zones you want your worker nodes spread across equally.
+  .properties.plan1_selector.active.master_instances:
+    value: 1
+  .properties.plan1_selector.active.master_vm_type:
+    value: medium.disk
+  .properties.plan1_selector.active.master_persistent_disk_type:
+    value: "10240"
+  .properties.plan1_selector.active.worker_vm_type:
+    value: medium.disk
+  .properties.plan1_selector.active.worker_persistent_disk_type:
+    value: "51200"
+  .properties.plan1_selector.active.worker_instances:
+    value: 3    # The number of K8s worker instances
+  .properties.plan1_selector.active.errand_vm_type:
+    value: micro
+  .properties.plan1_selector.active.addons_spec:
+    value: "" # Kubernetes yml that contains specifications of addons to run on every cluster. This is an experimental feature. Please consider carefully before applying this to your plan
+  .properties.plan1_selector.active.allow_privileged_containers:
+    value: false  # Privileged containers run with host-like permissions. Allowing your users to deploy privileged containers in clusters using this plan can create security vulnerabilities and may impact other tiles. Use with caution.
+  .properties.plan1_selector.active.disable_deny_escalating_exec:
+    value: false  # This admission controller will deny exec and attach commands to pods that run with escalated privileges that allow host access. If checked, the admission controller will be disabled. Clusters in this plan can then create security vulnerabilities and may impact other tiles. Use with caution.
+
+  .properties.plan2_selector:
+    value: Plan Active
+  .properties.plan2_selector.active.master_az_placement:
+    value: [az1]
+  .properties.plan2_selector.active.worker_az_placement:
+    value: [az1]  # Specify the availability zones you want your worker nodes spread across equally.
+  .properties.plan2_selector.active.master_instances:
+    value: 3
+  .properties.plan2_selector.active.master_vm_type:
+    value: large
+  .properties.plan2_selector.active.master_persistent_disk_type:
+    value: "10240"
+  .properties.plan2_selector.active.worker_vm_type:
+    value: medium.disk
+  .properties.plan2_selector.active.worker_persistent_disk_type:
+    value: "51200"
+  .properties.plan2_selector.active.worker_instances:
+    value: 5    # The number of K8s worker instances
+  .properties.plan2_selector.active.errand_vm_type:
+    value: micro
+  .properties.plan2_selector.active.addons_spec:
+    value: "" # Kubernetes yml that contains specifications of addons to run on every cluster. This is an experimental feature. Please consider carefully before applying this to your plan
+  .properties.plan2_selector.active.allow_privileged_containers:
+    value: false  # Privileged containers run with host-like permissions. Allowing your users to deploy privileged containers in clusters using this plan can create security vulnerabilities and may impact other tiles. Use with caution.
+  .properties.plan2_selector.active.disable_deny_escalating_exec:
+    value: false  # This admission controller will deny exec and attach commands to pods that run with escalated privileges that allow host access. If checked, the admission controller will be disabled. Clusters in this plan can then create security vulnerabilities and may impact other tiles. Use with caution.
+
+  .properties.plan3_selector:
+    value: Plan Active
+  .properties.plan3_selector.active.master_az_placement:
+    value: [az1]
+  .properties.plan3_selector.active.worker_az_placement:
+    value: [az1]  # Specify the availability zones you want your worker nodes spread across equally.
+  .properties.plan3_selector.active.master_instances:
+    value: 3
+  .properties.plan3_selector.active.master_vm_type:
+    value: large
+  .properties.plan3_selector.active.master_persistent_disk_type:
+    value: "10240"
+  .properties.plan3_selector.active.worker_vm_type:
+    value: medium.disk
+  .properties.plan3_selector.active.worker_persistent_disk_type:
+    value: "51200"
+  .properties.plan3_selector.active.worker_instances:
+    value: 7    # The number of K8s worker instances
+  .properties.plan3_selector.active.errand_vm_type:
+    value: micro
+  .properties.plan3_selector.active.addons_spec:
+    value: "" # Kubernetes yml that contains specifications of addons to run on every cluster. This is an experimental feature. Please consider carefully before applying this to your plan
+  .properties.plan3_selector.active.allow_privileged_containers:
+    value: false  # Privileged containers run with host-like permissions. Allowing your users to deploy privileged containers in clusters using this plan can create security vulnerabilities and may impact other tiles. Use with caution.
+  .properties.plan3_selector.active.disable_deny_escalating_exec:
+    value: false  # This admission controller will deny exec and attach commands to pods that run with escalated privileges that allow host access. If checked, the admission controller will be disabled. Clusters in this plan can then create security vulnerabilities and may impact other tiles. Use with caution.
+
+  .properties.proxy_selector:
+    value: Disabled
+  .properties.sink_resources:
+    value: true
+  .properties.telemetry_selector:
+    value: disabled
+  .properties.uaa:
+    value: ldap
+  .properties.uaa.ldap.credentials:
+    value:
+      identity: ((ldap_username))
+      password: ((ldap_password))
+  .properties.uaa.ldap.external_groups_whitelist:
+    value: '*'
+  .properties.uaa.ldap.group_search_base:
+    value: ((ldap_group_search_base))
+  .properties.uaa.ldap.group_search_filter:
+    value: member={0}
+  .properties.uaa.ldap.ldap_referrals:
+    value: ignore
+  .properties.uaa.ldap.mail_attribute_name:
+    value: mail
+  .properties.uaa.ldap.search_base:
+    value: ((ldap_user_search_base))
+  .properties.uaa.ldap.search_filter:
+    value: cn={0}
+  .properties.uaa.ldap.url:
+    value: ldap://((changeme))/
+  .properties.uaa_oidc:
+    value: true
+  .properties.uaa_pks_cli_access_token_lifetime:
+    value: 600
+  .properties.uaa_pks_cli_refresh_token_lifetime:
+    value: 21600
+  .properties.wavefront:
+    value: disabled
+  .properties.worker_max_in_flight:
+    value: 1
+network-properties:
+  network:
+    name: INFRASTRUCTURE
+  other_availability_zones:
+  - name: az1
+  service_network:
+    name: INFRASTRUCTURE
+  singleton_availability_zone:
+    name: az1
+resource-config:
+  pivotal-container-service:
+    instances: automatic
+    persistent_disk:
+      size_mb: automatic
+    instance_type:
+      id: automatic
+errand-config:
+  delete-all-clusters:
+    pre-delete-state: true
+  pks-nsx-t-precheck:
+    post-deploy-state: false
+  upgrade-all-service-instances:
+    post-deploy-state: true
+  wavefront-alert-creation:
+    post-deploy-state: false
+  wavefront-alert-deletion:
+    pre-delete-state: false

@@ -1,0 +1,6 @@
+pivnet-api-token: "changeme"
+pivnet-file-glob: "*pivotal"
+pivnet-product-slug: "pivotal-container-service"
+product-version: "1.2.4"
+download-stemcell: true
+stemcell-iaas: "vsphere"

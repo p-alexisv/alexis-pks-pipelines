@@ -1,0 +1,8 @@
+access_key_id: "changeme"
+secret_access_key: "changeme"
+region: "us-east-1"
+bucket: "changeme"
+system_domain: "changeme"
+pks_api: "api.changeme"
+pivnet_token: "changeme"
+opsman_version: 2.3.5

@@ -1,0 +1,22 @@
+opsman-configuration:
+  vsphere:
+    vcenter:
+      url: ((vcenter_host_ip))
+      username: ((vcenter_username))
+      password: ((vcenter_password))
+      datastore: LUN01
+      datacenter: Datacenter
+      resource_pool: /Datacenter/host/Cluster/Resources/RP24
+      folder: /Datacenter/vm/pcf_vms_env_24
+      insecure: 1                            # 1 insecure, 0 secure
+    disk_type: thin                          # example: thin|thick
+    private_ip: ((opsman_vm_ip_address))
+    dns: ((dns))
+    ntp: ((ntp))
+    ssh_password: ((opsman_vm_ssh_password))
+    #ssh_public_key: ssh-rsa ......           # for OpsManager >= 2.3
+    hostname: ((opsman_hostname_fqdn))
+    network: Lab-env24                 # vcenter network to deploy to
+    netmask: 255.255.255.0
+    gateway: ((gateway_ip))
+    vm_name: pks-opsman-2.3

@@ -5,7 +5,8 @@ This contains the pipelines I use to install and delete PKS foundations in vSphe
 
 <h1>Set up and run an install-pks pipeline</h1>
 
-- This is to automate installation of the whole foundation consisting of Ops Man, BOSH Director and PKS VM's.
+- This is to automate installation of the whole PKS foundation consisting of Ops Man, BOSH Director and PKS VM's.
+- You need a Concourse server where you can set and run the pipeline.
 
 
 <h2>Step 1: Get and note down the following.  You will use these in creating your params.yml file for step 5.</h2>
